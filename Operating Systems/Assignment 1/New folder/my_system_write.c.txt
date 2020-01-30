@@ -1,0 +1,91 @@
++#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sched.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include "tiny_shell.h"
+#include <fcntl.h>
+
+int my_system_write(char *user_command, char *my_fifo);
+
+//this is the implementation of the UNIX system call (system()) using fork().
+int main(int argc, char *argv[]){
+
+	//name of the fifo will come from the second command line argument
+	char *my_fifo = argv[1];
+	
+	while(1){
+		char *command;
+
+		//ask user for command
+		puts("Enter a command:");
+		command = get_a_line();
+
+		//we check the size of the command and based on that execute
+		if(strlen(command) > 1){
+		
+			my_system_write(command, my_fifo);
+		}else{
+			exit(0);
+		}
+	}
+	return(0);
+}
+
+
+//adding additional support to support the writing end of named pipe
+int my_system_write(char *user_command,char *my_fifo){
+	pid_t pid;  //this local variable checks the process ID
+	char *args[20];
+	int status;
+	int fWrite;
+	int childStatus;
+
+	for(int i=0; i<20; i++) {
+		args[i] = NULL;
+	}
+
+	tokenize(user_command, args); //use method from tiny_shell.h to tokenize the string 
+	pid = fork();  //create a child process which excutes user command.
+
+	//incase user entered exit, then exit
+	if(strcasecmp("exit",args[0]) == 0){
+		exit(0);
+}
+	/*Checking pid to see if it is a child process or a parent process that is being executed. 
+	 *If 0, then it is a child process.
+	 */
+	if(pid == 0){
+		//Rerouting the stdout to the writing end of fifo
+		fWrite = open(my_fifo, O_WRONLY);
+		
+		if(fWrite == -1){
+			perror("Open");
+		}
+		
+		close(1);
+		dup2(fWrite,1);
+		childStatus = execvp(args[0], args);
+		
+		if(childStatus == -1){ // if child process failed,then exit.
+			perror("child failure");
+			exit(EXIT_FAILURE);
+		}
+		
+	}else if(pid > 0){
+		waitpid(pid, &status, 0); //wait for the child to execute.
+		
+		if(status == -1){
+			perror("child process failure \n");
+		}
+		
+	}else{ //if the value of pid is negative,then fork failed, hence exit my_system_write
+	
+ 		perror("fork failure");
+		exit(EXIT_FAILURE);
+	}
+
+	return(0);
+}

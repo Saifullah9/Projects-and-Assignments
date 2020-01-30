@@ -1,0 +1,46 @@
+// This header file contains helper functions which are used in tiny_shell.c
+#include <string.h>
+#include <stdio.h>
+#ifndef TINY_SHELL_H_
+#define TINY_SHELL_H_
+
+void tokenize(char *user_input,char *args[]);
+char *get_a_line();
+
+/*this function tokenizes the user input to handle cases where the user entered command flags such as spaces, then replacing
+* them with null.
+*/ 
+void tokenize(char *user_input, char *args[]){
+
+	char *modifiedString;
+	int argCount = 0;
+
+	//looping through input to tokenize
+	while((modifiedString = strsep(&user_input," \t\n"))!= NULL){
+		for(int i =0; i < strlen(modifiedString); i++){
+			//32 is the ASCII value of white space, hence if lower then replace with null
+			if(modifiedString[i] <= 32){
+				modifiedString[i] = '\0';
+			}
+		}
+		
+		
+		if(strlen(modifiedString) > 0){
+			args[argCount] = modifiedString;
+			argCount++;
+		}
+	}
+}
+// this functiion gets the user's line
+char *get_a_line(){
+	ssize_t numBytes = 0;
+	char *userLine;
+	getline(&userLine,&numBytes,stdin);
+	if(userLine == EOF){
+	free(userLine);
+	userLine = NULL;
+	exit(0);
+	}
+	return userLine;
+}
+#endif /* TINY_SHELL_H_ */

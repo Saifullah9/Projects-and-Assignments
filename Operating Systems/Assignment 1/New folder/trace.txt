@@ -1,0 +1,64 @@
+execve("./shell", ["./shell"], 0xbf9bd9a8 /* 25 vars */) = 0
+brk(NULL)                               = 0x2073000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb$
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_LARGEFILE|O_CLOEXEC) = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=165536, ...}) = 0
+mmap2(NULL, 165536, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7758000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/lib/i386-linux-gnu/libc.so.6", O_RDONLY|O_LARGEFILE|O_CLOEXE$
+read(3, "\177ELF\1\1\1\3\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\300\254\1\0004\0\0\0".$
+fstat64(3, {st_mode=S_IFREG|0755, st_size=1947056, ...}) = 0
+mmap2(NULL, 1955712, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xb757a000
+mprotect(0xb7593000, 1830912, PROT_NONE) = 0
+mmap2(0xb7593000, 1368064, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYW$
+mmap2(0xb76e1000, 458752, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x$
+mmap2(0xb7752000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWR$
+mmap2(0xb7755000, 10112, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYM$close(3)                                = 0
+set_thread_area({entry_number=-1, base_addr=0xb77820c0, limit=0x0fffff, seg_32b$
+mprotect(0xb7752000, 8192, PROT_READ)   = 0
+mprotect(0x501000, 4096, PROT_READ)     = 0
+mprotect(0xb77af000, 4096, PROT_READ)   = 0
+munmap(0xb7758000, 165536)              = 0
+rt_sigaction(SIGTSTP, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=0}, {sa_handler$
+rt_sigaction(SIGINT, {sa_handler=0x4ff86f, sa_mask=[INT], sa_flags=SA_RESTART},$
+write(1, "Enter a line:", 13)           = 13
+write(1, "\n", 1)                       = 1
+
+brk(NULL)                               = 0x2073000
+brk(0x2094000)                          = 0x2094000
+brk(0x2095000)                          = 0x2095000
+fstat64(0, {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0xd), ...}) = 0
+read(0, "w\n", 1024)                    = 2
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, $
+waitpid(4920, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0) = 4920
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=4920, si_uid=26343, s$
+rt_sigaction(SIGTSTP, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=0}, {sa_handler$
+rt_sigaction(SIGINT, {sa_handler=0x4ff86f, sa_mask=[INT], sa_flags=SA_RESTART},$write(1, "Enter a line:", 13)           = 13
+write(1, "\n", 1)                       = 1
+read(0, "ls\n", 1024)                   = 3
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, $
+waitpid(5037, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0) = 5037
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=5037, si_uid=26343, s$
+rt_sigaction(SIGTSTP, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=0}, {sa_handler$
+rt_sigaction(SIGINT, {sa_handler=0x4ff86f, sa_mask=[INT], sa_flags=SA_RESTART},$
+write(1, "Enter a line:", 13)           = 13
+write(1, "\n", 1)                       = 1
+read(0, "cd ..\n", 1024)                = 6
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, $
+waitpid(5047, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0) = 5047
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=5047, si_uid=26343, s$
+rt_sigaction(SIGTSTP, {sa_handler=SIG_IGN, sa_mask=[], sa_flags=0}, {sa_handler$
+rt_sigaction(SIGINT, {sa_handler=0x4ff86f, sa_mask=[INT], sa_flags=SA_RESTART},$
+write(1, "Enter a line:", 13)           = 13
+write(1, "\n", 1)                       = 1
+read(0, 0x20731e0, 1024)                = ? ERESTARTSYS (To be restarted if SA_$
+--- SIGINT {si_signo=SIGINT, si_code=SI_KERNEL} ---
+write(1, "Do you want to terminate program"..., 41) = 41
+read(0, "y\n", 1024)                    = 2
+getpid()                                = 4912
+kill(4912, SIGKILL)                     = ?
++++ killed by SIGKILL +++
+

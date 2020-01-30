@@ -1,0 +1,185 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sched.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#define _GNU_SOURCE
+#include <fcntl.h>
+#include "tiny_shell.h"
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <signal.h>
+
+//setting the stack size for our clone implementation of my_system
+#define HIST_COUNT 100
+
+static const char *history[HIST_COUNT];
+static int history_count = 0;
+void SIGINT_handle(int sig);
+struct sigaction saIgnore, saOrigQuit;  // for the handling of Ctrl-C ,Ctrl-Z
+
+
+int main(int argc, char *argv[]){
+	setbuf(stdout, NULL); //setting buffer to null.
+	
+	while(1){
+		char *command;
+		// this for the handling of Ctrl-Z by ignoring it 
+		saIgnore.sa_handler = SIG_IGN;
+		saIgnore.sa_flags = 0;
+		sigaction(SIGTSTP, &saIgnore, &saOrigQuit);
+		signal(SIGINT, SIGINT_handle); // this for the handling of Ctrl-C by calling the SIGINT_handle function. 
+		
+		puts("Enter a line:"); //ask user for command.
+		command = get_a_line();
+
+		//we check the size of the command and based on that execute
+		if(strlen(command) > 1){
+			//preprocessing compiler flags for testing various versions of my_system()
+
+			my_system(command);
+
+			if(strcasecmp(command,"exit") == 0){
+				exit(0);
+			}
+			free(command);
+			command = NULL;
+	}
+	
+	
+	}
+	return(0);
+}
+
+//this is an implementation of the UNIX system call (system()) using fork() system call.
+int my_system(char *user_command){
+	//this local variable will check the process ID, this is to differentiate between parent and child
+	pid_t pid;
+	char *args[20];
+	char cwd[256];
+	int status;
+	int childStatus;
+	addToHistory(user_command); // adding the command to history
+	
+	//this for loop will set to NULL the args array that will hold user input after tokenizing the command
+	for(int i=0; i<20; i++) {
+		args[i] = NULL;
+	}
+	//after initilization, we now tokenize the input
+	tokenize(user_command, args);
+
+	//we now call fork() here to create a child process which will execute user command
+	pid = fork();
+
+	if(strcasecmp("exit",args[0]) == 0){
+		exit(0);
+	}
+	/*Checking pid to see if it is a child process or a parent process that is being executed. 
+	 *If 0, then it is a child process. Else, it is a parent process.
+	 */
+	if(pid == 0){
+		
+	if(strcasecmp(args[0],"cd") == 0){ //if the command is cd.
+	
+		//path gets passed to args[1], so we call chdir on that
+		childStatus = chdir(args[1]);
+		printf(getcwd(cwd, sizeof(cwd)));
+		
+	}else if(strcasecmp(args[0], "limit") == 0){ // if the command is limit.
+		struct rlimit oldLimit, newLimit;
+		getrlimit(RLIMIT_NOFILE, &oldLimit);
+		printf("The old limits:\n\tsoft limit: %ld\n\thard limit: %ld\n", 
+				oldLimit.rlim_cur, oldLimit.rlim_max);
+
+	// Verify if a new limit was provided 
+		if(args[1] == NULL){ 
+			printf("please enter the new limit\n"); 
+			return;
+		} 
+		
+	// Set the new limit with user input 
+		unsigned long maxLimit = strtol(args[1], NULL, 10);
+		newLimit.rlim_cur = maxLimit;
+		newLimit.rlim_max = oldLimit.rlim_max;
+		if(setrlimit(RLIMIT_NOFILE, &newLimit) == -1){
+			perror("Handle setrlimit() error\n");
+		}
+		printf("The new limits:\n\tsoft limit: %ld\n\thard limit: %ld\n", 
+				newLimit.rlim_cur, newLimit.rlim_max);
+	
+	}else if (strcasecmp(args[0],"history") == 0){ // if command is history
+		
+	int i = 0;
+	int numHistory = 1;
+	
+		do{
+			if(history[i]){
+				printf("%4d  %s\n", numHistory, history[i]);
+				numHistory++;
+			}
+			i++;
+		} while(i != HIST_COUNT);
+		childStatus = 1;
+	}else{
+		childStatus = execvp(args[0], args);
+		}
+		
+		if(childStatus == -1){
+			perror("child failure");
+			exit(EXIT_FAILURE); //Exit the failed child process
+		}
+	}
+
+	//we want to ensure that the child successfully finishes execution of user command
+	//thus in parent we call wait
+	else if(pid > 0){
+	
+		//we call waitpid so that we can wait for the child to execute in proper time
+		waitpid(pid, &status, 0);
+		if(status == -1){
+		
+			perror("The child process failed.");
+		}
+		
+	}else{ //if the value of pid is negative, we know fork failed, so exit my_system
+	
+		perror("fork failure");
+		exit(EXIT_FAILURE);
+	}
+
+	return(0);
+}
+
+void addToHistory(const char *user_line){
+
+if(history_count < HIST_COUNT){
+        history[history_count++] = strdup( user_line );
+	}else{
+        free(history[0]);
+        for(int i=1; i < HIST_COUNT; i++){
+            history[i- 1] = history[i];
+        }
+        history[HIST_COUNT - 1] = strdup( user_line );
+    }
+
+}
+
+void SIGINT_handle(int sig){
+	printf("Do you wish to terminate the program? Y or N:");
+	char userinput = getc(stdin);
+	if(userinput == 'Y' || userinput == 'y'){
+		kill(getpid(), SIGKILL);
+	}else{
+
+		saIgnore.sa_handler = SIG_IGN;
+		saIgnore.sa_flags = 0;
+		sigaction(SIGINT, &saIgnore, &saOrigQuit);
+	}
+}
+
+
+
+
+

@@ -1,0 +1,128 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <semaphore.h>
+#include <time.h>
+#include <sys/time.h>
+#include <pthread.h>
+#include <sys/resource.h>
+#include <string.h>
+
+
+/*
+I added this part to set the stacksize of the threads since
+the method pTHreasd_create was exiting withe an error when
+creating more than 293 threads.
+*/
+
+static sem_t mutex;             //Semaphore for readCount
+static sem_t mutex_rw;          //Semaphore for reader/writer access
+static int readCount = 0;       //Number of readers accessing target
+static int target = 0;          //Target value to read and write
+static int currentReader = 0;   //Index for current reader
+static int currentWriter = 0;   //Index for current wirter
+static int numReader = 500;
+static int numWriter = 10;
+
+static void *reader(void * args)            //Reader function
+{
+  int loops = *((int *) args);              
+  struct timeval tv;                        //Used to access current time
+  time_t dTime, timeIn, timeOut;            //used to calculate timing
+
+  dTime = 0;      							//Initialize timing values
+  timeIn = 0;
+  timeOut = 0;
+                        //current 
+  return NULL;
+}
+
+static void *writer(void * args)              //writer function
+{
+  int loops = *((int *) args);                //args used to determine number of times to loop
+  int temp;                                   //Used to temp store target
+  struct timeval tv;                          //used to calculate timing, hold timing
+  time_t dTime, timeIn, timeOut;
+
+  dTime = 0;              //initiate timing values
+  timeIn = 0;
+  timeOut = 0;
+	return NULL;
+	
+}
+
+int main(int argc, char *argv[]){
+	
+  pthread_t readers[numReader],writers[numWriter];         //create arrays of threads
+  //tokenize(argc, argv);
+  int n;
+  int w;
+  int r;
+  
+  int Rloop = atoi(argv[1]);
+  int Wloop = atoi(argv[2]);
+  int loops = 100; 
+
+
+  float  readMaximum, readMinimum, readAverage, writeMaximum, writeMinimum, writeAverage; //hold timing info
+
+  srand(time(NULL));            //seed random number generator
+
+  if(sem_init(&mutex,0,1) == -1)          //initiate semaphores
+  {
+    printf("Error initiating semaphore exiting...\n");
+    exit(1);
+  }
+
+  if(sem_init(&mutex_rw,0,1) == -1)
+{
+    printf("Error initiating semaphore exiting...\n");
+    exit(1);
+  }
+
+  for (w = 0; w < numWriter; w++){   //create writer threads
+    printf("creating writer thread %d \n",w);
+    n = pthread_create(&writers[w], NULL, &writer, &Wloop);
+    if(n !=0){
+		
+      printf("Error creating writer %d exiting...\n",w);
+      exit(1);
+    }
+
+  }
+
+  for (r = 0; r < numReader; r++){   //create reader threads
+    printf("creating reader thread\n",r);
+    n = pthread_create(&readers[r], NULL, reader, &Rloop);
+    if(n !=0){
+	 // int x = pthread_attr_getstacksize();
+	 printf("error is : %d \n",n);
+      printf("Error creating reader %d exiting...\n",r);
+	/*	getrlimit(RLIMIT_NPROC, &oldLimit);
+		printf("The old limits:\n\tsoft limit: %ld\n\thard limit: %ld\n", 
+				oldLimit.rlim_cur, oldLimit.rlim_max);
+	*/	
+      exit(1);
+    }
+
+  }
+
+  for (w = 0; w < numWriter; w++){  //detaching writer threads
+    n = pthread_join(writers[w], NULL);
+    if (n != 0) {
+      printf("Error, creating threads\n");
+      exit(1);
+    }
+
+  }
+
+  for (r = 0; r < numReader; r++){  //detaching reader threads
+
+    n = pthread_join(readers[r], NULL);
+    if (n != 0) {
+      printf("Error, creating threads\n");
+	  
+      exit(1);
+    }
+
+  }
