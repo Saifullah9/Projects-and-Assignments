@@ -1,1 +1,0 @@
-web: npm install && echo $PORT && export PORT && npm start
