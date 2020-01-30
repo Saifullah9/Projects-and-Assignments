@@ -1,0 +1,24 @@
+matrix:
+  include:
+  - language: java
+    script:
+    - "./gradlew build -xtest"
+    deploy:
+      provider: heroku
+      app: cooperator-backend-00
+      api_key: b0829905-5665-4aaf-a103-0f01f44aaf30
+  - language: node_js
+    node_js:
+    - 10.15
+    cache: npm
+    before_install:
+    - cd Frontend
+    install:
+    - npm install
+    script:
+    - npm run build
+    deploy:
+      provider: heroku
+      api_key: b0829905-5665-4aaf-a103-0f01f44aaf30
+      app: cooperator-frontend-00
+

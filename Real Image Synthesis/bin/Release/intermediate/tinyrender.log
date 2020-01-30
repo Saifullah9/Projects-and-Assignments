@@ -1,0 +1,21 @@
+﻿  renderer.cpp
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\integrators\direct.h(98,23): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\integrators\direct.h(146,23): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\integrators\direct.h(183,23): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\integrators\direct.h(214,23): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\integrators\direct.h(260,23): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\integrators\direct.h(288,23): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\integrators\polygonal.h(41,21): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\integrators\polygonal.h(131,23): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\integrators\polygonal.h(189,21): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\integrators\polygonal.h(232,23): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\integrators\polygonal.h(252,23): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\renderpasses\polygonal.h(119,21): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\renderpasses\polygonal.h(235,21): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\renderpasses\gi.h(45,21): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\core\renderer.cpp(142): warning C4700:  uninitialized local variable 'event' used
+C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\src\renderpasses\polygonal.h(208): warning C4700:  uninitialized local variable 'x_offset' used
+  tinyrender.vcxproj -> C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\bin\Release\tinyrender.exe
+  C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\externals\opengl\dll\glew32.dll
+  C:\Users\HP\Desktop\Fall2019\ECSE446\fall-2019\externals\opengl\dll\SDL2.dll
+  2 File(s) copied
